@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INGENIUSPRO — Engineering Intelligence Systems</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Exo+2:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg-primary:#04070d;--bg-secondary:#07111b;--bg-tertiary:#0b1724;--bg-card:#0f2133;
+--cyan:#00d4ff;--blue:#1d7eff;--green:#00ff9d;--amber:#ffb400;--red:#ff365d;
+--text-primary:#eaf6ff;--text-secondary:#9ab6cb;--text-dark:#5d7f98;
+--glow-cyan:0 0 20px rgba(0,212,255,0.3),0 0 40px rgba(0,212,255,0.1);
+--glow-blue:0 0 20px rgba(29,126,255,0.3),0 0 40px rgba(29,126,255,0.1);
+--glow-green:0 0 20px rgba(0,255,157,0.3),0 0 40px rgba(0,255,157,0.1);
+}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:'Exo 2',sans-serif;background:var(--bg-primary);color:var(--text-primary);overflow-x:hidden;line-height:1.6}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg-primary)}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--cyan),var(--blue));border-radius:3px}
+
+/* CANVAS PARTICLES */
+#particles-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+/* GRID BACKGROUND */
+.grid-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;
+background-image:
+linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),
+linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px);
+background-size:60px 60px;
+animation:gridMove 20s linear infinite}
+@keyframes gridMove{0%{transform:translate(0,0)}100%{transform:translate(60px,60px)}}
+
+/* HEADER */
+.header{position:fixed;top:0;left:0;width:100%;z-index:1000;padding:0 40px;
+background:rgba(7,17,27,0.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+border-bottom:1px solid rgba(0,212,255,0.1);
+transition:all 0.4s cubic-bezier(0.4,0,0.2,1)}
+.header.scrolled{background:rgba(4,7,13,0.92);padding:0 40px;
+box-shadow:0 4px 30px rgba(0,212,255,0.08)}
+.header-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px}
+.header-logo{display:flex;align-items:center;gap:14px;text-decoration:none}
+.header-logo svg{width:42px;height:42px}
+.header-logo-text{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;
+background:linear-gradient(135deg,var(--cyan),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px}
+.header-nav{display:flex;align-items:center;gap:8px}
+.header-nav a{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:500;color:var(--text-secondary);
+text-decoration:none;padding:8px 18px;border-radius:6px;transition:all 0.3s ease;letter-spacing:1px;
+text-transform:uppercase;position:relative}
+.header-nav a:hover{color:var(--cyan);background:rgba(0,212,255,0.08)}
+.header-nav a::after{content:'';position:absolute;bottom:2px;left:50%;width:0;height:1px;
+background:var(--cyan);transition:all 0.3s ease;transform:translateX(-50%)}
+.header-nav a:hover::after{width:60%}
+.header-line{position:absolute;bottom:0;left:0;width:100%;height:1px;
+background:linear-gradient(90deg,transparent,var(--cyan),var(--blue),var(--cyan),transparent);opacity:0.4}
+.mobile-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;z-index:1001}
+.mobile-toggle span{width:24px;height:2px;background:var(--cyan);transition:all 0.3s ease;border-radius:1px}
+.mobile-toggle.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.mobile-toggle.active span:nth-child(2){opacity:0}
+.mobile-toggle.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+
+/* HERO */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;
+overflow:hidden;padding:120px 40px 80px;z-index:1}
+.hero-bg{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0}
+.hero-orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.15;animation:orbFloat 8s ease-in-out infinite}
+.hero-orb-1{width:600px;height:600px;background:var(--cyan);top:-200px;right:-100px;animation-delay:0s}
+.hero-orb-2{width:500px;height:500px;background:var(--blue);bottom:-150px;left:-100px;animation-delay:2s}
+.hero-orb-3{width:400px;height:400px;background:var(--green);top:50%;left:50%;transform:translate(-50%,-50%);animation-delay:4s;opacity:0.08}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(30px,-30px) scale(1.1)}}
+
+.hero-hud{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.hud-line{position:absolute;background:linear-gradient(90deg,transparent,rgba(0,212,255,0.15),transparent);height:1px}
+.hud-line-1{top:20%;left:5%;width:15%}
+.hud-line-2{top:35%;right:5%;width:10%}
+.hud-line-3{bottom:25%;left:8%;width:12%}
+.hud-line-4{bottom:40%;right:10%;width:8%}
+.hud-corner{position:absolute;width:30px;height:30px;border-color:rgba(0,212,255,0.2);border-style:solid;border-width:0}
+.hud-corner-tl{top:60px;left:60px;border-top-width:1px;border-left-width:1px}
+.hud-corner-tr{top:60px;right:60px;border-top-width:1px;border-right-width:1px}
+.hud-corner-bl{bottom:60px;left:60px;border-bottom-width:1px;border-left-width:1px}
+.hud-corner-br{bottom:60px;right:60px;border-bottom-width:1px;border-right-width:1px}
+.hud-data{position:absolute;font-family:'Rajdhani',sans-serif;font-size:11px;color:rgba(0,212,255,0.4);letter-spacing:2px}
+.hud-data-1{top:80px;left:80px}
+.hud-data-2{top:80px;right:80px;text-align:right}
+.hud-data-3{bottom:80px;left:80px}
+.hud-data-4{bottom:80px;right:80px;text-align:right}
+
+.hero-content{position:relative;z-index:2;text-align:center;max-width:1000px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;
+background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);border-radius:50px;
+font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;color:var(--cyan);
+letter-spacing:3px;text-transform:uppercase;margin-bottom:30px;
+animation:fadeInUp 1s ease 0.2s both}
+.hero-badge-dot{width:6px;height:6px;background:var(--cyan);border-radius:50%;
+animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.5)}}
+
+.hero-title{font-family:'Orbitron',sans-serif;font-size:clamp(48px,8vw,96px);font-weight:900;
+line-height:1;margin-bottom:8px;animation:fadeInUp 1s ease 0.4s both;position:relative}
+.hero-title-main{background:linear-gradient(135deg,#fff 0%,var(--cyan) 50%,var(--blue) 100%);
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+background-size:200% 200%;animation:gradientShift 4s ease infinite}
+@keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.hero-title-sub{font-family:'Orbitron',sans-serif;font-size:clamp(14px,2vw,22px);font-weight:400;
+color:var(--text-secondary);letter-spacing:6px;text-transform:uppercase;
+animation:fadeInUp 1s ease 0.6s both;margin-bottom:24px}
+.hero-desc{font-family:'Exo 2',sans-serif;font-size:clamp(14px,1.5vw,18px);font-weight:300;
+color:var(--text-secondary);max-width:700px;margin:0 auto 40px;line-height:1.8;
+animation:fadeInUp 1s ease 0.8s both}
+.hero-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;animation:fadeInUp 1s ease 1s both}
+.btn{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;letter-spacing:2px;
+text-transform:uppercase;padding:14px 36px;border-radius:8px;text-decoration:none;
+transition:all 0.4s cubic-bezier(0.4,0,0.2,1);cursor:pointer;position:relative;overflow:hidden}
+.btn-primary{background:linear-gradient(135deg,var(--cyan),var(--blue));color:var(--bg-primary);
+border:none;box-shadow:var(--glow-cyan)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(0,212,255,0.5),0 0 60px rgba(0,212,255,0.2)}
+.btn-primary::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);transition:0.5s}
+.btn-primary:hover::before{left:100%}
+.btn-secondary{background:transparent;color:var(--cyan);
+border:1px solid rgba(0,212,255,0.3);backdrop-filter:blur(10px)}
+.btn-secondary:hover{background:rgba(0,212,255,0.08);border-color:var(--cyan);
+transform:translateY(-2px);box-shadow:var(--glow-cyan)}
+
+.hero-stats{display:flex;gap:40px;justify-content:center;margin-top:60px;animation:fadeInUp 1s ease 1.2s both;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat-value{font-family:'Orbitron',sans-serif;font-size:clamp(28px,3vw,42px);font-weight:700;
+background:linear-gradient(135deg,var(--cyan),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-stat-label{font-family:'Rajdhani',sans-serif;font-size:12px;color:var(--text-dark);
+letter-spacing:2px;text-transform:uppercase;margin-top:4px}
+
+.hero-scroll{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);z-index:2;
+display:flex;flex-direction:column;align-items:center;gap:8px;animation:fadeInUp 1s ease 1.4s both}
+.hero-scroll-text{font-family:'Rajdhani',sans-serif;font-size:10px;color:var(--text-dark);letter-spacing:3px;text-transform:uppercase}
+.hero-scroll-line{width:1px;height:40px;background:linear-gradient(180deg,var(--cyan),transparent);animation:scrollLine 2s ease-in-out infinite}
+@keyframes scrollLine{0%,100%{opacity:0.3;transform:scaleY(1)}50%{opacity:1;transform:scaleY(1.2)}}
+
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+/* SECTIONS */
+.section{position:relative;z-index:1;padding:100px 40px}
+.section-header{text-align:center;margin-bottom:60px}
+.section-tag{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;color:var(--cyan);
+letter-spacing:4px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px}
+.section-tag-line{width:40px;height:1px;background:linear-gradient(90deg,var(--cyan),transparent)}
+.section-tag-line:last-child{background:linear-gradient(90deg,transparent,var(--cyan))}
+.section-title{font-family:'Orbitron',sans-serif;font-size:clamp(28px,4vw,48px);font-weight:700;
+margin-bottom:16px}
+.section-title span{background:linear-gradient(135deg,var(--cyan),var(--blue));
+-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.section-desc{font-family:'Exo 2',sans-serif;font-size:16px;color:var(--text-secondary);
+max-width:600px;margin:0 auto;line-height:1.7}
+
+/* SOLUTIONS CARDS */
+.solutions-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:24px;max-width:1400px;margin:0 auto}
+.solution-card{position:relative;background:rgba(15,33,51,0.6);border:1px solid rgba(0,212,255,0.08);
+border-radius:16px;padding:36px 28px;transition:all 0.5s cubic-bezier(0.4,0,0.2,1);
+backdrop-filter:blur(10px);overflow:hidden;cursor:default}
+.solution-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:2px;
+background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:opacity 0.5s}
+.solution-card::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+background:radial-gradient(circle,rgba(0,212,255,0.06) 0%,transparent 60%);opacity:0;transition:opacity 0.5s;pointer-events:none}
+.solution-card:hover{transform:translateY(-8px);border-color:rgba(0,212,255,0.2);
+box-shadow:0 20px 60px rgba(0,0,0,0.4),0 0 30px rgba(0,212,255,0.08)}
+.solution-card:hover::before,.solution-card:hover::after{opacity:1}
+.solution-icon{width:56px;height:56px;margin-bottom:20px;position:relative}
+.solution-icon svg{width:100%;height:100%}
+.solution-card h3{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:600;
+margin-bottom:10px;color:var(--text-primary);letter-spacing:1px}
+.solution-card p{font-family:'Exo 2',sans-serif;font-size:13px;color:var(--text-secondary);line-height:1.7}
+.solution-tag{display:inline-block;margin-top:16px;padding:4px 12px;font-family:'Rajdhani',sans-serif;
+font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;border-radius:4px;
+background:rgba(0,212,255,0.08);color:var(--cyan);border:1px solid rgba(0,212,255,0.15)}
+
+/* TECHNOLOGY SECTION */
+.tech-section{background:linear-gradient(180deg,var(--bg-primary),var(--bg-secondary),var(--bg-primary))}
+.tech-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;max-width:1400px;margin:0 auto}
+.tech-card{position:relative;background:rgba(11,23,36,0.8);border:1px solid rgba(0,212,255,0.06);
+border-radius:12px;padding:28px;transition:all 0.4s ease;overflow:hidden}
+.tech-card:hover{border-color:rgba(0,212,255,0.15);box-shadow:0 8px 40px rgba(0,0,0,0.3)}
+.tech-card-header{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.tech-card-icon{width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+background:rgba(0,212,255,0.08);border-radius:10px;border:1px solid rgba(0,212,255,0.1)}
+.tech-card-icon svg{width:22px;height:22px}
+.tech-card h4{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:600;letter-spacing:1px}
+.tech-card p{font-size:12px;color:var(--text-secondary);line-height:1.6}
+.tech-metric{display:flex;align-items:center;gap:8px;margin-top:16px;padding-top:16px;
+border-top:1px solid rgba(0,212,255,0.06)}
+.tech-metric-bar{flex:1;height:3px;background:rgba(0,212,255,0.1);border-radius:2px;overflow:hidden}
+.tech-metric-fill{height:100%;border-radius:2px;transition:width 1.5s cubic-bezier(0.4,0,0.2,1)}
+.tech-metric-value{font-family:'Orbitron',sans-serif;font-size:11px;color:var(--cyan);min-width:40px;text-align:right}
+
+/* DEMOS SECTION */
+.demos-section{background:linear-gradient(180deg,var(--bg-primary),var(--bg-tertiary),var(--bg-primary))}
+.demos-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;max-width:1200px;margin:0 auto}
+.demo-card{position:relative;background:rgba(15,33,51,0.5);border:1px solid rgba(0,212,255,0.08);
+border-radius:16px;overflow:hidden;transition:all 0.5s cubic-bezier(0.4,0,0.2,1)}
+.demo-card:hover{transform:translateY(-6px);border-color:rgba(0,212,255,0.2);
+box-shadow:0 20px 60px rgba(0,0,0,0.4),0 0 20px rgba(0,212,255,0.1)}
+.demo-preview{height:180px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.demo-preview-bg{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.15}
+.demo-preview-grid{position:absolute;top:0;left:0;width:100%;height:100%;
+background-image:linear-gradient(rgba(0,212,255,0.1) 1px,transparent 1px),
+linear-gradient(90deg,rgba(0,212,255,0.1) 1px,transparent 1px);background-size:20px 20px}
+.demo-preview svg{width:80px;height:80px;position:relative;z-index:1;opacity:0.7}
+.demo-status{position:absolute;top:12px;right:12px;padding:4px 10px;font-family:'Rajdhani',sans-serif;
+font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;border-radius:4px;z-index:2}
+.demo-status-active{background:rgba(0,255,157,0.15);color:var(--green);border:1px solid rgba(0,255,157,0.3)}
+.demo-status-ai{position:absolute;top:12px;left:12px;padding:4px 10px;font-family:'Rajdhani',sans-serif;
+font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;border-radius:4px;z-index:2;
+background:rgba(0,212,255,0.15);color:var(--cyan);border:1px solid rgba(0,212,255,0.3)}
+.demo-body{padding:24px}
+.demo-body h4{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:600;margin-bottom:6px;letter-spacing:1px}
+.demo-body p{font-size:12px;color:var(--text-secondary);line-height:1.6;margin-bottom:16px}
+.demo-meta{display:flex;gap:16px;margin-bottom:20px}
+.demo-meta-item{display:flex;align-items:center;gap:6px}
+.demo-meta-dot{width:6px;height:6px;border-radius:50%}
+.demo-meta-label{font-family:'Rajdhani',sans-serif;font-size:10px;color:var(--text-dark);letter-spacing:1px;text-transform:uppercase}
+.demo-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;
+font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
+color:var(--cyan);background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);border-radius:8px;
+text-decoration:none;transition:all 0.3s ease;cursor:pointer}
+.demo-btn:hover{background:rgba(0,212,255,0.15);border-color:var(--cyan);
+box-shadow:var(--glow-cyan);transform:translateY(-1px)}
+.demo-btn svg{width:16px;height:16px;transition:transform 0.3s}
+.demo-btn:hover svg{transform:translateX(4px)}
+
+/* INNOVATION SECTION */
+.innovation-section{background:linear-gradient(180deg,var(--bg-primary),var(--bg-secondary))}
+.innovation-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;max-width:1200px;margin:0 auto}
+.innovation-card{position:relative;padding:32px 24px;background:rgba(11,23,36,0.5);
+border:1px solid rgba(0,212,255,0.06);border-radius:14px;transition:all 0.4s ease;text-align:center}
+.innovation-card:hover{border-color:rgba(0,212,255,0.15);transform:translateY(-4px)}
+.innovation-card .inno-icon{width:64px;height:64px;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;
+background:linear-gradient(135deg,rgba(0,212,255,0.1),rgba(29,126,255,0.1));
+border-radius:16px;border:1px solid rgba(0,212,255,0.1)}
+.innovation-card .inno-icon svg{width:32px;height:32px}
+.innovation-card h4{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:600;
+letter-spacing:1px;margin-bottom:8px}
+.innovation-card p{font-size:12px;color:var(--text-secondary);line-height:1.6}
+
+/* FOOTER */
+.footer{position:relative;z-index:1;padding:60px 40px 30px;
+background:linear-gradient(180deg,var(--bg-primary),#020408);
+border-top:1px solid rgba(0,212,255,0.06)}
+.footer-inner{max-width:1400px;margin:0 auto}
+.footer-top{display:flex;justify-content:space-between;align-items:flex-start;gap:40px;
+flex-wrap:wrap;margin-bottom:40px;padding-bottom:40px;border-bottom:1px solid rgba(0,212,255,0.06)}
+.footer-brand{max-width:300px}
+.footer-brand-logo{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.footer-brand-logo svg{width:36px;height:36px}
+.footer-brand-logo span{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;
+background:linear-gradient(135deg,var(--cyan),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.footer-brand p{font-size:12px;color:var(--text-dark);line-height:1.7}
+.footer-links{display:flex;gap:60px;flex-wrap:wrap}
+.footer-col h5{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:600;
+color:var(--cyan);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
+.footer-col a{display:block;font-size:12px;color:var(--text-secondary);text-decoration:none;
+padding:4px 0;transition:color 0.3s}
+.footer-col a:hover{color:var(--cyan)}
+.footer-social{display:flex;gap:12px}
+.footer-social a{width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.1);border-radius:8px;
+transition:all 0.3s;color:var(--text-secondary)}
+.footer-social a:hover{background:rgba(0,212,255,0.12);border-color:var(--cyan);color:var(--cyan)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.footer-bottom p{font-size:11px;color:var(--text-dark);letter-spacing:1px}
+.footer-bottom-links{display:flex;gap:20px}
+.footer-bottom-links a{font-size:11px;color:var(--text-dark);text-decoration:none;transition:color 0.3s}
+.footer-bottom-links a:hover{color:var(--cyan)}
+
+/* ANIMATIONS */
+.reveal{opacity:0;transform:translateY(40px);transition:all 0.8s cubic-bezier(0.4,0,0.2,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.1s}
+.reveal-delay-2{transition-delay:0.2s}
+.reveal-delay-3{transition-delay:0.3s}
+.reveal-delay-4{transition-delay:0.4s}
+.reveal-delay-5{transition-delay:0.5s}
+.reveal-delay-6{transition-delay:0.6s}
+.reveal-delay-7{transition-delay:0.7s}
+.reveal-delay-8{transition-delay:0.8s}
+
+/* ENERGY LINES */
+.energy-line{position:absolute;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+opacity:0.3;animation:energyPulse 3s ease-in-out infinite}
+@keyframes energyPulse{0%,100%{opacity:0;transform:scaleX(0)}50%{opacity:0.4;transform:scaleX(1)}}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+.header{padding:0 24px}
+.section{padding:80px 24px}
+.hero{padding:100px 24px 60px}
+.hero-stats{gap:24px}
+.footer-top{gap:30px}
+.footer-links{gap:30px}
+}
+@media(max-width:768px){
+.mobile-toggle{display:flex}
+.header-nav{position:fixed;top:0;right:-100%;width:280px;height:100vh;
+background:rgba(7,17,27,0.98);backdrop-filter:blur(20px);flex-direction:column;
+justify-content:center;gap:4px;padding:40px;transition:right 0.4s cubic-bezier(0.4,0,0.2,1);
+border-left:1px solid rgba(0,212,255,0.1)}
+.header-nav.open{right:0}
+.header-nav a{font-size:16px;padding:12px 20px;width:100%}
+.hero-stats{flex-direction:column;gap:16px}
+.demos-grid{grid-template-columns:1fr}
+.solutions-grid{grid-template-columns:1fr}
+.tech-grid{grid-template-columns:1fr}
+.innovation-grid{grid-template-columns:1fr 1fr}
+.hud-corner,.hud-data{display:none}
+.footer-top{flex-direction:column}
+.footer-links{flex-direction:column;gap:24px}
+.footer-bottom{flex-direction:column;text-align:center}
+}
+@media(max-width:480px){
+.hero-title{font-size:36px}
+.hero-title-sub{font-size:12px;letter-spacing:3px}
+.hero-desc{font-size:14px}
+.innovation-grid{grid-template-columns:1fr}
+.section{padding:60px 16px}
+.hero{padding:90px 16px 40px}
+}
+
+/* SCAN LINE EFFECT */
+.scanline{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;
+background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);
+opacity:0.3}
+
+/* COUNTER ANIMATION */
+.counter{display:inline-block}
+
+/* LOADING */
+.loader{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg-primary);
+z-index:10000;display:flex;align-items:center;justify-content:center;
+transition:opacity 0.6s ease,visibility 0.6s ease}
+.loader.hidden{opacity:0;visibility:hidden}
+.loader-content{text-align:center}
+.loader-logo svg{width:60px;height:60px;margin-bottom:20px}
+.loader-bar{width:200px;height:2px;background:rgba(0,212,255,0.1);border-radius:1px;overflow:hidden;margin:0 auto}
+.loader-bar-fill{width:0;height:100%;background:linear-gradient(90deg,var(--cyan),var(--blue));
+border-radius:1px;animation:loaderFill 1.5s ease forwards}
+@keyframes loaderFill{to{width:100%}}
+.loader-text{font-family:'Rajdhani',sans-serif;font-size:11px;color:var(--text-dark);
+letter-spacing:3px;text-transform:uppercase;margin-top:12px}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div class="loader" id="loader">
+<div class="loader-content">
+<div class="loader-logo">
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="lg1" x1="0" y1="0" x2="100" y2="100"><stop offset="0%" stop-color="#00d4ff"/><stop offset="100%" stop-color="#1d7eff"/></linearGradient>
+</defs>
+<circle cx="50" cy="50" r="45" stroke="url(#lg1)" stroke-width="1" opacity="0.3"/>
+<circle cx="50" cy="50" r="35" stroke="url(#lg1)" stroke-width="1.5" opacity="0.5"/>
+<polygon points="50,15 78,65 22,65" stroke="url(#lg1)" stroke-width="2" fill="none"/>
+<polygon points="50,85 22,35 78,35" stroke="url(#lg1)" stroke-width="1.5" fill="none" opacity="0.6"/>
+<circle cx="50" cy="50" r="4" fill="#00d4ff"/>
+<circle cx="50" cy="15" r="3" fill="#00d4ff"/>
+<circle cx="22" cy="65" r="3" fill="#1d7eff"/>
+<circle cx="78" cy="65" r="3" fill="#1d7eff"/>
+<line x1="50" y1="50" x2="50" y2="15" stroke="#00d4ff" stroke-width="0.5" opacity="0.4"/>
+<line x1="50" y1="50" x2="22" y2="65" stroke="#1d7eff" stroke-width="0.5" opacity="0.4"/>
+<line x1="50" y1="50" x2="78" y2="65" stroke="#1d7eff" stroke-width="0.5" opacity="0.4"/>
+</svg>
+</div>
+<div class="loader-bar"><div class="loader-bar-fill"></div></div>
+<div class="loader-text">Initializing Systems</div>
+</div>
+</div>
+
+<!-- SCANLINE OVERLAY -->
+<div class="scanline"></div>
+
+<!-- PARTICLES CANVAS -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- GRID BG -->
+<div class="grid-bg"></div>
+
+<!-- HEADER -->
+<header class="header" id="header">
+<div class="header-inner">
+<a href="#" class="header-logo">
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="hlg" x1="0" y1="0" x2="100" y2="100"><stop offset="0%" stop-color="#00d4ff"/><stop offset="100%" stop-color="#1d7eff"/></linearGradient>
+</defs>
+<circle cx="50" cy="50" r="45" stroke="url(#hlg)" stroke-width="1" opacity="0.3"/>
+<circle cx="50" cy="50" r="35" stroke="url(#hlg)" stroke-width="1.5" opacity="0.5"/>
+<polygon points="50,15 78,65 22,65" stroke="url(#hlg)" stroke-width="2" fill="none"/>
+<polygon points="50,85 22,35 78,35" stroke="url(#hlg)" stroke-width="1.5" fill="none" opacity="0.6"/>
+<circle cx="50" cy="50" r="4" fill="#00d4ff"/>
+<circle cx="50" cy="15" r="3" fill="#00d4ff"/>
+<circle cx="22" cy="65" r="3" fill="#1d7eff"/>
+<circle cx="78" cy="65" r="3" fill="#1d7eff"/>
+<line x1="50" y1="50" x2="50" y2="15" stroke="#00d4ff" stroke-width="0.5" opacity="0.4"/>
+<line x1="50" y1="50" x2="22" y2="65" stroke="#1d7eff" stroke-width="0.5" opacity="0.4"/>
+<line x1="50" y1="50" x2="78" y2="65" stroke="#1d7eff" stroke-width="0.5" opacity="0.4"/>
+</svg>
+<span class="header-logo-text">INGENIUSPRO</span>
+</a>
+<nav class="header-nav" id="mainNav">
+<a href="#hero">Inicio</a>
+<a href="#soluciones">Soluciones</a>
+<a href="#tecnologia">Tecnología</a>
+<a href="#demos">Demos IA</a>
+<a href="#innovacion">Innovación</a>
+<a href="#contacto">Contacto</a>
+</nav>
+<div class="mobile-toggle" id="mobileToggle">
+<span></span><span></span><span></span>
+</div>
+</div>
+<div class="header-line"></div>
+</header>
+
+<!-- HERO SECTION -->
+<section class="hero" id="hero">
+<div class="hero-bg">
+<div class="hero-orb hero-orb-1"></div>
+<div class="hero-orb hero-orb-2"></div>
+<div class="hero-orb hero-orb-3"></div>
+</div>
+<div class="hero-hud">
+<div class="hud-line hud-line-1"></div>
+<div class="hud-line hud-line-2"></div>
+<div class="hud-line hud-line-3"></div>
+<div class="hud-line hud-line-4"></div>
+<div class="hud-corner hud-corner-tl"></div>
+<div class="hud-corner hud-corner-tr"></div>
+<div class="hud-corner hud-corner-bl"></div>
+<div class="hud-corner hud-corner-br"></div>
+<div class="hud-data hud-data-1">SYS.STATUS: <span style="color:var(--green)">ONLINE</span></div>
+<div class="hud-data hud-data-2">LAT: 19.4326° N<br>LON: 99.1332° W</div>
+<div class="hud-data hud-data-3">AI MODEL v4.2.1<br>NEURAL CORE: ACTIVE</div>
+<div class="hud-data hud-data-4">UPTIME: 99.97%<br>LATENCY: 12ms</div>
+</div>
+
+<div class="hero-content">
+<div class="hero-badge">
+<span class="hero-badge-dot"></span>
+Plataforma de Ingeniería Inteligente
+</div>
+<h1 class="hero-title">
+<span class="hero-title-main">INGENIUSPRO</span>
+</h1>
+<div class="hero-title-sub">Engineering Intelligence Systems</div>
+<p class="hero-desc">Soluciones avanzadas de ingeniería potenciadas con Inteligencia Artificial, Digital Twins y Analítica Predictiva para la industria del futuro.</p>
+<div class="hero-buttons">
+<a href="#demos" class="btn btn-primary">Ver Demos IA</a>
+<a href="#soluciones" class="btn btn-secondary">Explorar Soluciones</a>
+</div>
+<div class="hero-stats">
+<div class="hero-stat">
+<div class="hero-stat-value"><span class="counter" data-target="150">0</span>+</div>
+<div class="hero-stat-label">Proyectos Activos</div>
+</div>
+<div class="hero-stat">
+<div class="hero-stat-value"><span class="counter" data-target="99.9">0</span>%</div>
+<div class="hero-stat-label">Uptime Garantizado</div>
+</div>
+<div class="hero-stat">
+<div class="hero-stat-value"><span class="counter" data-target="40">0</span>%</div>
+<div class="hero-stat-label">Reducción de Costos</div>
+</div>
+<div class="hero-stat">
+<div class="hero-stat-value"><span class="counter" data-target="24">0</span>/7</div>
+<div class="hero-stat-label">Monitoreo Continuo</div>
+</div>
+</div>
+</div>
+
+<div class="hero-scroll">
+<span class="hero-scroll-text">Scroll</span>
+<div class="hero-scroll-line"></div>
+</div>
+</section>
+
+<!-- SOLUTIONS SECTION -->
+<section class="section" id="soluciones">
+<div class="section-header reveal">
+<div class="section-tag">
+<span class="section-tag-line"></span>
+Soluciones Avanzadas
+<span class="section-tag-line"></span>
+</div>
+<h2 class="section-title">Nuestras <span>Soluciones</span></h2>
+<p class="section-desc">Plataformas integrales de ingeniería inteligente diseñadas para transformar operaciones industriales con IA de última generación.</p>
+</div>
+
+<div class="solutions-grid">
+<div class="solution-card reveal reveal-delay-1">
+<div class="solution-icon">
+<svg viewBox="0 0 56 56" fill="none"><circle cx="28" cy="28" r="24" stroke="#00d4ff" stroke-width="1.5" opacity="0.3"/><path d="M28 8 L28 48 M20 16 L36 16 M18 28 L38 28 M22 40 L34 40" stroke="#00d4ff" stroke-width="1.5" stroke-linecap="round"/><circle cx="28" cy="16" r="3" fill="#00d4ff" opacity="0.6"/><circle cx="28" cy="28" r="3" fill="#00d4ff"/><circle cx="28" cy="40" r="3" fill="#00d4ff" opacity="0.6"/></svg>
+</div>
+<h3>Sistemas Energéticos</h3>
+<p>Optimización inteligente de generación, distribución y consumo energético con algoritmos predictivos avanzados.</p>
+<span class="solution-tag">Energy AI</span>
+</div>
+
+<div class="solution-card reveal reveal-delay-2">
+<div class="solution-icon">
+<svg viewBox="0 0 56 56" fill="none"><rect x="10" y="14" width="36" height="28" rx="2" stroke="#1d7eff" stroke-width="1.5" opacity="0.5"/><path d="M10 22 L46 22" stroke="#1d7eff" stroke-width="1"/><path d="M22 22 L22 42 M34 22 L34 42" stroke="#1d7eff" stroke-width="1"/><circle cx="28" cy="32" r="4" stroke="#1d7eff" stroke-width="1.5"/><circle cx="28" cy="32" r="1.5" fill="#1d7eff"/></svg>
+</div>
+<h3>Diseño Industrial</h3>
+<p>Ingeniería asistida por IA para diseño optimizado de componentes, estructuras y sistemas industriales complejos.</p>
+<span class="solution-tag">Design AI</span>
+</div>
+
+<div class="solution-card reveal reveal-delay-3">
+<div class="solution-icon">
+<svg viewBox="0 0 56 56" fill="none"><path d="M14 42 L14 20 L28 12 L42 20 L42 42 Z" stroke="#00ff9d" stroke-width="1.5" fill="none"/><path d="M28 12 L28 42 M14 28 L42 28" stroke="#00ff9d" stroke-width="1" opacity="0.4"/><circle cx="28" cy="27" r="5" stroke="#00ff9d" stroke-width="1.5"/><circle cx="28" cy="27" r="2" fill="#00ff9d" opacity="0.6"/></svg>
+</div>
+<h3>Manufactura Inteligente</h3>
+<p>Automatización de procesos de manufactura con machine learning, visión artificial y control adaptativo en tiempo real.</p>
+<span class="solution-tag">Smart Mfg</span>
+</div>
+
+<div class="solution-card reveal reveal-delay-4">
+<div class="solution-icon">
+<svg viewBox="0 0 56 56" fill="none"><circle cx="28" cy="28" r="18" stroke="#ffb400" stroke-width="1.5" opacity="0.3"/><path d="M28 10 A18 18 0 0 1 46 28" stroke="#ffb400" stroke-width="2" stroke-linecap="round" opacity="0.7"/><path d="M10 28 A18 18 0 0 1 28 46" stroke="#ff365d" stroke-width="2" stroke-linecap="round" opacity="0.7"/><circle cx="28" cy="28" r="4" fill="#ffb400" opacity="0.5"/><line x1="28" y1="10" x2="28" y2="16" stroke="#ffb400" stroke-width="1.5" stroke-linecap="round"/><line x1="46" y1="28" x2="40" y2="28" stroke="#ffb400" stroke-width="1.5" stroke-linecap="round"/></svg>
+</div>
+<h3>Mantenimiento Predictivo</h3>
+<p>Predicción de fallas antes de que ocurran mediante análisis de vibraciones, termografía y modelos de degradación.</p>
+<span class="solution-tag">Predictive</span>
+</div>
+
+<div class="solution-card reveal reveal-delay-5">
+<div class="solution-icon">
+<svg viewBox="0 0 56 56" fill="none"><circle cx="20" cy="28" r="12" stroke="#00d4ff" stroke-width="1.5" fill="none" opacity="0.4"/><circle cx="36" cy="28" r="12" stroke="#1d7eff" stroke-width="1.5" fill="none" opacity="0.4"/><circle cx="28" cy="28" r="8" stroke="#00d4ff" stroke-width="1" fill="rgba(0,212,255,0.1)"/><line x1="12" y1="28" x2="20" y2="28" stroke="#00d4ff" stroke-width="1" opacity="0.3"/><line x1="36" y1="28" x2="44" y2="28" stroke="#1d7eff" stroke-width="1" opacity="0.3"/></svg>
+</div>
+<h3>Gemelos Digitales</h3>
+<p>Modelos virtuales dinámicos de activos físicos que permiten simulación, optimización y monitoreo en tiempo real.</p>
+<span class="solution-tag">Digital Twin</span>
+</div>
+
+<div class="solution-card reveal reveal-delay-6">
+<div class="solution-icon">
+<svg viewBox="0 0 56 56" fill="none"><path d="M14 40 L14 20 L28 14 L42 20 L42 40 L28 46 Z" stroke="#00ff9d" stroke-width="1.5" fill="none" opacity="0.4"/><path d="M28 14 L28 46 M14 20 L42 20" stroke="#00ff9d" stroke-width="1" opacity="0.3"/><circle cx="28" cy="30" r="3" fill="#00ff9d" opacity="0.5"/><circle cx="28" cy="20" r="2" fill="#00d4ff" opacity="0.5"/><circle cx="20" cy="30" r="2" fill="#1d7eff" opacity="0.5"/><circle cx="36" cy="30" r="2" fill="#ffb400" opacity="0.5"/></svg>
+</div>
+<h3>Reliability Engineering</h3>
+<p>Ingeniería de confiabilidad basada en datos para maximizar disponibilidad y vida útil de activos críticos.</p>
+<span class="solution-tag">Reliability</span>
+</div>
+
+<div class="solution-card reveal reveal-delay-7">
+<div class="solution-icon">
+<svg viewBox="0 0 56 56" fill="none"><circle cx="28" cy="20" r="6" stroke="#00d4ff" stroke-width="1.5" fill="none"/><circle cx="16" cy="36" r="4" stroke="#1d7eff" stroke-width="1" fill="none"/><circle cx="40" cy="36" r="4" stroke="#00ff9d" stroke-width="1" fill="none"/><line x1="28" y1="26" x2="16" y2="32" stroke="#00d4ff" stroke-width="1" opacity="0.4"/><line x1="28" y1="26" x2="40" y2="32" stroke="#00d4ff" stroke-width="1" opacity="0.4"/><line x1="20" y1="36" x2="36" y2="36" stroke="#1d7eff" stroke-width="1" opacity="0.3"/></svg>
+</div>
+<h3>IA Industrial</h3>
+<p>Modelos de inteligencia artificial especializados para entornos industriales: redes neuronales, deep learning y edge computing.</p>
+<span class="solution-tag">Industrial AI</span>
+</div>
+
+<div class="solution-card reveal reveal-delay-8">
+<div class="solution-icon">
+<svg viewBox="0 0 56 56" fill="none"><rect x="12" y="12" width="12" height="12" rx="2" stroke="#ffb400" stroke-width="1.5" fill="none" opacity="0.5"/><rect x="32" y="12" width="12" height="12" rx="2" stroke="#ffb400" stroke-width="1.5" fill="none" opacity="0.5"/><rect x="12" y="32" width="12" height="12" rx="2" stroke="#00d4ff" stroke-width="1.5" fill="none" opacity="0.5"/><rect x="32" y="32" width="12" height="12" rx="2" stroke="#00d4ff" stroke-width="1.5" fill="none" opacity="0.5"/><line x1="24" y1="18" x2="32" y2="18" stroke="#ffb400" stroke-width="1" opacity="0.3"/><line x1="18" y1="24" x2="18" y2="32" stroke="#00d4ff" stroke-width="1" opacity="0.3"/><line x1="38" y1="24" x2="38" y2="32" stroke="#00d4ff" stroke-width="1" opacity="0.3"/></svg>
+</div>
+<h3>Gestión de Activos</h3>
+<p>Plataforma integral para gestión del ciclo de vida de activos críticos con análisis de riesgo y optimización de inversiones.</p>
+<span class="solution-tag">Asset Mgmt</span>
+</div>
+</div>
+</section>
+
+<!-- TECHNOLOGY SECTION -->
+<section class="section tech-section" id="tecnologia">
+<div class="section-header reveal">
+<div class="section-tag">
+<span class="section-tag-line"></span>
+Stack Tecnológico
+<span class="section-tag-line"></span>
+</div>
+<h2 class="section-title">Tecnología <span>de Vanguardia</span></h2>
+<p class="section-desc">Motor tecnológico avanzado que combina IA, IoT y analítica predictiva para revolucionar la ingeniería industrial.</p>
+</div>
+
+<div class="tech-grid">
+<div class="tech-card reveal reveal-delay-1">
+<div class="tech-card-header">
+<div class="tech-card-icon">
+<svg viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="8" stroke="#00d4ff" stroke-width="1.5"/><circle cx="11" cy="11" r="3" fill="#00d4ff" opacity="0.6"/><path d="M11 3 L11 7 M11 15 L11 19 M3 11 L7 11 M15 11 L19 11" stroke="#00d4ff" stroke-width="1" opacity="0.4"/></svg>
+</div>
+<h4>Inteligencia Artificial</h4>
+</div>
+<p>Modelos de deep learning y redes neuronales convolucionales para análisis de patrones complejos en datos industriales.</p>
+<div class="tech-metric">
+<div class="tech-metric-bar"><div class="tech-metric-fill" style="width:95%;background:linear-gradient(90deg,#00d4ff,#1d7eff)"></div></div>
+<span class="tech-metric-value">95%</span>
+</div>
+</div>
+
+<div class="tech-card reveal reveal-delay-2">
+<div class="tech-card-header">
+<div class="tech-card-icon">
+<svg viewBox="0 0 22 22" fill="none"><path d="M4 18 L4 8 L11 4 L18 8 L18 18 L11 22 Z" stroke="#00ff9d" stroke-width="1.5" fill="none"/><path d="M11 4 L11 22 M4 12 L18 12" stroke="#00ff9d" stroke-width="1" opacity="0.4"/><circle cx="11" cy="13" r="2" fill="#00ff9d" opacity="0.5"/></svg>
+</div>
+<h4>Machine Learning</h4>
+</div>
+<p>Algoritmos supervisados y no supervisados entrenados con millones de datos operacionales para predicción de alta precisión.</p>
+<div class="tech-metric">
+<div class="tech-metric-bar"><div class="tech-metric-fill" style="width:92%;background:linear-gradient(90deg,#00ff9d,#00d4ff)"></div></div>
+<span class="tech-metric-value">92%</span>
+</div>
+</div>
+
+<div class="tech-card reveal reveal-delay-3">
+<div class="tech-card-header">
+<div class="tech-card-icon">
+<svg viewBox="0 0 22 22" fill="none"><circle cx="6" cy="6" r="3" stroke="#1d7eff" stroke-width="1.5"/><circle cx="16" cy="6" r="3" stroke="#1d7eff" stroke-width="1.5"/><circle cx="11" cy="16" r="3" stroke="#1d7eff" stroke-width="1.5"/><line x1="9" y1="6" x2="13" y2="6" stroke="#1d7eff" stroke-width="1" opacity="0.4"/><line x1="7" y1="9" x2="10" y2="14" stroke="#1d7eff" stroke-width="1" opacity="0.4"/><line x1="15" y1="9" x2="12" y2="14" stroke="#1d7eff" stroke-width="1" opacity="0.4"/></svg>
+</div>
+<h4>IIoT Industrial</h4>
+</div>
+<p>Red de sensores inteligentes interconectados con protocolos industriales y edge computing para captura de datos en tiempo real.</p>
+<div class="tech-metric">
+<div class="tech-metric-bar"><div class="tech-metric-fill" style="width:88%;background:linear-gradient(90deg,#1d7eff,#00d4ff)"></div></div>
+<span class="tech-metric-value">88%</span>
+</div>
+</div>
+
+<div class="tech-card reveal reveal-delay-4">
+<div class="tech-card-header">
+<div class="tech-card-icon">
+<svg viewBox="0 0 22 22" fill="none"><circle cx="8" cy="11" r="6" stroke="#00d4ff" stroke-width="1.5" fill="none" opacity="0.4"/><circle cx="14" cy="11" r="6" stroke="#1d7eff" stroke-width="1.5" fill="none" opacity="0.4"/><circle cx="11" cy="11" r="3" fill="rgba(0,212,255,0.2)" stroke="#00d4ff" stroke-width="1"/></svg>
+</div>
+<h4>Digital Twins</h4>
+</div>
+<p>Réplicas virtuales dinámicas sincronizadas con activos físicos para simulación predictiva y optimización continua.</p>
+<div class="tech-metric">
+<div class="tech-metric-bar"><div class="tech-metric-fill" style="width:96%;background:linear-gradient(90deg,#00d4ff,#00ff9d)"></div></div>
+<span class="tech-metric-value">96%</span>
+</div>
+</div>
+
+<div class="tech-card reveal reveal-delay-5">
+<div class="tech-card-header">
+<div class="tech-card-icon">
+<svg viewBox="0 0 22 22" fill="none"><path d="M3 18 L8 10 L13 14 L19 4" stroke="#ffb400" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="3" cy="18" r="1.5" fill="#ffb400"/><circle cx="8" cy="10" r="1.5" fill="#ffb400"/><circle cx="13" cy="14" r="1.5" fill="#ffb400"/><circle cx="19" cy="4" r="1.5" fill="#ffb400"/></svg>
+</div>
+<h4>Predictive Analytics</h4>
+</div>
+<p>Análisis estadístico avanzado con modelos de series temporales y proyección de tendencias para toma de decisiones.</p>
+<div class="tech-metric">
+<div class="tech-metric-bar"><div class="tech-metric-fill" style="width:94%;background:linear-gradient(90deg,#ffb400,#ff365d)"></div></div>
+<span class="tech-metric-value">94%</span>
+</div>
+</div>
+
+<div class="tech-card reveal reveal-delay-6">
+<div class="tech-card-header">
+<div class="tech-card-icon">
+<svg viewBox="0 0 22 22" fill="none"><path d="M4 16 L4 6 L11 3 L18 6 L18 16 L11 19 Z" stroke="#ff365d" stroke-width="1.5" fill="none"/><path d="M7 12 L11 16 L15 9" stroke="#ff365d" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="10" r="1" fill="#ff365d"/></svg>
+</div>
+<h4>Structural Health</h4>
+</div>
+<p>Monitoreo continuo de integridad estructural con sensores de fibra óptica, acelerómetros y análisis modal avanzado.</p>
+<div class="tech-metric">
+<div class="tech-metric-bar"><div class="tech-metric-fill" style="width:91%;background:linear-gradient(90deg,#ff365d,#ffb400)"></div></div>
+<span class="tech-metric-value">91%</span>
+</div>
+</div>
+
+<div class="tech-card reveal reveal-delay-7">
+<div class="tech-card-header">
+<div class="tech-card-icon">
+<svg viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="16" height="12" rx="2" stroke="#00d4ff" stroke-width="1.5" fill="none"/><path d="M7 15 L15 15 L13 19 L9 19 Z" stroke="#00d4ff" stroke-width="1" fill="none" opacity="0.4"/><line x1="7" y1="7" x2="15" y2="7" stroke="#00d4ff" stroke-width="1" opacity="0.3"/><line x1="7" y1="10" x2="12" y2="10" stroke="#00d4ff" stroke-width="1" opacity="0.3"/><circle cx="15" cy="10" r="1" fill="#00ff9d"/></svg>
+</div>
+<h4>SCADA Inteligente</h4>
+</div>
+<p>Sistemas de supervisión y adquisición de datos potenciados con IA para control adaptativo y visualización avanzada.</p>
+<div class="tech-metric">
+<div class="tech-metric-bar"><div class="tech-metric-fill" style="width:97%;background:linear-gradient(90deg,#00d4ff,#1d7eff)"></div></div>
+<span class="tech-metric-value">97%</span>
+</div>
+</div>
+
+<div class="tech-card reveal reveal-delay-8">
+<div class="tech-card-header">
+<div class="tech-card-icon">
+<svg viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="#00ff9d" stroke-width="1" opacity="0.3"/><path d="M11 2 C11 2 15 7 15 11 C15 15 11 20 11 20" stroke="#00ff9d" stroke-width="1.5" fill="none"/><path d="M11 2 C11 2 7 7 7 11 C7 15 11 20 11 20" stroke="#1d7eff" stroke-width="1.5" fill="none" opacity="0.5"/><circle cx="11" cy="11" r="2" fill="#00ff9d" opacity="0.6"/></svg>
+</div>
+<h4>Industrial AI</h4>
+</div>
+<p>Inteligencia artificial especializada para entornos industriales: procesamiento de señales, visión industrial y robótica cognitiva.</p>
+<div class="tech-metric">
+<div class="tech-metric-bar"><div class="tech-metric-fill" style="width:93%;background:linear-gradient(90deg,#00ff9d,#00d4ff)"></div></div>
+<span class="tech-metric-value">93%</span>
+</div>
+</div>
+</div>
+</section>
+
+<!-- DEMOS IA SECTION -->
+<section class="section demos-section" id="demos">
+<div class="section-header reveal">
+<div class="section-tag">
+<span class="section-tag-line"></span>
+Laboratorio de Demos
+<span class="section-tag-line"></span>
+</div>
+<h2 class="section-title">Demos <span>Inteligencia Artificial</span></h2>
+<p class="section-desc">Explora nuestros demos interactivos de IA aplicada a ingeniería. Cada demo representa una solución real implementada en entornos industriales.</p>
+</div>
+
+<div class="demos-grid">
+<div class="demo-card reveal reveal-delay-1">
+<div class="demo-preview" style="background:linear-gradient(135deg,rgba(0,212,255,0.05),rgba(29,126,255,0.05))">
+<div class="demo-preview-grid"></div>
+<svg viewBox="0 0 80 80" fill="none"><rect x="10" y="30" width="60" height="8" rx="2" stroke="#00d4ff" stroke-width="2" fill="none" opacity="0.6"/><line x1="15" y1="38" x2="15" y2="55" stroke="#00d4ff" stroke-width="1.5"/><line x1="25" y1="38" x2="25" y2="55" stroke="#00d4ff" stroke-width="1.5"/><line x1="35" y1="38" x2="35" y2="55" stroke="#00d4ff" stroke-width="1.5"/><line x1="45" y1="38" x2="45" y2="55" stroke="#00d4ff" stroke-width="1.5"/><line x1="55" y1="38" x2="55" y2="55" stroke="#00d4ff" stroke-width="1.5"/><line x1="65" y1="38" x2="65" y2="55" stroke="#00d4ff" stroke-width="1.5"/><path d="M10 55 L70 55" stroke="#00d4ff" stroke-width="2"/><path d="M40 15 L40 30" stroke="#00ff9d" stroke-width="2" stroke-linecap="round"/><circle cx="40" cy="15" r="4" fill="#00ff9d" opacity="0.4" stroke="#00ff9d" stroke-width="1.5"/></svg>
+<div class="demo-status-active">● ACTIVO</div>
+<div class="demo-status-ai">⬡ IA</div>
+</div>
+<div class="demo-body">
+<h4>Análisis de Viga</h4>
+<p>Simulación de comportamiento estructural de vigas bajo cargas variables con análisis de estrés y deformación en tiempo real.</p>
+<div class="demo-meta">
+<div class="demo-meta-item"><span class="demo-meta-dot" style="background:var(--green)"></span><span class="demo-meta-label">Alta Precisión</span></div>
+<div class="demo-meta-item"><span class="demo-meta-dot" style="background:var(--amber)"></span><span class="demo-meta-label">Criticidad Media</span></div>
+</div>
+<a href="pages/Viga.html" class="demo-btn" target="_blank">
+Abrir Demo
+<svg viewBox="0 0 16 16" fill="none"><path d="M3 8 L13 8 M10 4 L14 8 L10 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</a>
+</div>
+</div>
+
+<div class="demo-card reveal reveal-delay-2">
+<div class="demo-preview" style="background:linear-gradient(135deg,rgba(0,255,157,0.05),rgba(0,212,255,0.05))">
+<div class="demo-preview-grid"></div>
+<svg viewBox="0 0 80 80" fill="none"><path d="M15 55 L15 25 L65 25 L65 55 Z" stroke="#00ff9d" stroke-width="2" fill="none" opacity="0.5"/><path d="M15 25 L40 10 L65 25" stroke="#00ff9d" stroke-width="2" fill="none"/><path d="M30 55 L30 40 L50 40 L50 55" stroke="#00d4ff" stroke-width="1.5" fill="none" opacity="0.4"/><line x1="40" y1="10" x2="40" y2="55" stroke="#00d4ff" stroke-width="1" opacity="0.3" stroke-dasharray="3 3"/><circle cx="40" cy="32" r="5" stroke="#00ff9d" stroke-width="1.5" fill="none"/><circle cx="40" cy="32" r="2" fill="#00ff9d" opacity="0.5"/></svg>
+<div class="demo-status-active">● ACTIVO</div>
+<div class="demo-status-ai">⬡ IA</div>
+</div>
+<div class="demo-body">
+<h4>Nave Industrial</h4>
+<p>Diseño y análisis estructural de naves industriales con optimización de perfiles, cargas de viento y sismo integradas.</p>
+<div class="demo-meta">
+<div class="demo-meta-item"><span class="demo-meta-dot" style="background:var(--cyan)"></span><span class="demo-meta-label">Modelo 3D</span></div>
+<div class="demo-meta-item"><span class="demo-meta-dot" style="background:var(--red)"></span><span class="demo-meta-label">Alta Criticidad</span></div>
+</div>
+<a href="pages/NaveE.html" class="demo-btn" target="_blank">
+Abrir Demo
+<svg viewBox="0 0 16 16" fill="none"><path d="M3 8 L13 8 M10 4 L14 8 L10 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</a>
+</div>
+</div>
+
+<div class="demo-card reveal reveal-delay-3">
+<div class="demo-preview" style="background:linear-gradient(135deg,rgba(29,126,255,0.05),rgba(0,212,255,0.05))">
+<div class="demo-preview-grid"></div>
+<svg viewBox="0 0 80 80" fill="none"><ellipse cx="40" cy="40" rx="25" ry="15" stroke="#1d7eff" stroke-width="2" fill="none" opacity="0.5"/><path d="M15 40 L15 50 Q40 65 65 50 L65 40" stroke="#1d7eff" stroke-width="1.5" fill="none" opacity="0.3"/><ellipse cx="40" cy="40" rx="25" ry="15" stroke="#00d4ff" stroke-width="1" fill="none" opacity="0.2" transform="rotate(30 40 40)"/><circle cx="40" cy="40" r="8" stroke="#1d7eff" stroke-width="1.5" fill="none"/><circle cx="40" cy="40" r="3" fill="#1d7eff" opacity="0.5"/><line x1="40" y1="25" x2="40" y2="32" stroke="#1d7eff" stroke-width="1.5" stroke-linecap="round"/></svg>
+<div class="demo-status-active">● ACTIVO</div>
+<div class="demo-status-ai">⬡ IA</div>
+</div>
+<div class="demo-body">
+<h4>Tubería Tipo 1</h4>
+<p>Análisis de estrés en tuberías con modelos de elementos finitos, análisis de flexibilidad y evaluación de soportes.</p>
+<div class="demo-meta">
+<div class="demo-meta-item"><span class="demo-meta-dot" style="background:var(--green)"></span><span class="demo-meta-label">FEM Analysis</span></div>
+<div class="demo-meta-item"><span class="demo-meta-dot" style="background:var(--amber)"></span><span class="demo-meta-label">Criticidad Media</span></div>
+</div>
+<a href="pages/Tub1.html" class="demo-btn" target="_blank">
+Abrir Demo
+<svg viewBox="0 0 16 16" fill="none"><path d="M3 8 L13 8 M10 4 L14 8 L10 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</a>
+</div>
+</div>
+
+<div class="demo-card reveal reveal-delay-4">
+<div class="demo-preview" style="background:linear-gradient(135deg,rgba(255,180,0,0.05),rgba(0,212,255,0.05))">
+<div class="demo-preview-grid"></div>
+<svg viewBox="0 0 80 80" fill="none"><path d="M20 55 L20 30 Q40 15 60 30 L60 55 Z" stroke="#ffb400" stroke-width="2" fill="none" opacity="0.5"/><path d="M20 30 Q40 15 60 30" stroke="#ffb400" stroke-width="1.5" fill="none" opacity="0.3"/><line x1="30" y1="55" x2="30" y2="45" stroke="#ffb400" stroke-width="1.5"/><line x1="50" y1="55" x2="50" y2="45" stroke="#ffb400" stroke-width="1.5"/><circle cx="40" cy="35" r="6" stroke="#ffb400" stroke-width="1.5" fill="none"/><circle cx="40" cy="35" r="2.5" fill="#ffb400" opacity="0.5"/><path d="M35 35 L45 35 M40 30 L40 40" stroke="#ffb400" stroke-width="1" opacity="0.4"/></svg>
+<div class="demo-status-active">● ACTIVO</div>
+<div class="demo-status-ai">⬡ IA</div>
+</div>
+<div class="demo-body">
+<h4>Tubería Tipo 2</h4>
+<p>Simulación avanzada de tuberías con análisis térmico, vibraciones y evaluación de fatiga por ciclos de presión.</p>
+<div class="demo-meta">
+<div class="demo-meta-item"><span class="demo-meta-dot" style="background:var(--amber)"></span><span class="demo-meta-label">Thermal FEM</span></div>
+<div class="demo-meta-item"><span class="demo-meta-dot" style="background:var(--red)"></span><span class="demo-meta-label">Alta Criticidad</span></div>
+</div>
+<a href="pages/Tub2.html" class="demo-btn" target="_blank">
+Abrir Demo
+<svg viewBox="0 0 16 16" fill="none"><path d="M3 8 L13 8 M10 4 L14 8 L10 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</a>
+</div>
+</div>
+
+<div class="demo-card reveal reveal-delay-5">
+<div class="demo-preview" style="background:linear-gradient(135deg,rgba(255,54,93,0.05),rgba(0,212,255,0.05))">
+<div class="demo-preview-grid"></div>
+<svg viewBox="0 0 80 80" fill="none"><circle cx="40" cy="35" r="18" stroke="#ff365d" stroke-width="2" fill="none" opacity="0.4"/><circle cx="40" cy="35" r="12" stroke="#ff365d" stroke-width="1.5" fill="none" opacity="0.3"/><path d="M40 17 L40 12 M40 58 L40 53 M22 35 L17 35 M58 35 L63 35" stroke="#ff365d" stroke-width="1.5" stroke-linecap="round"/><path d="M28 35 L32 35 M48 35 L52 35" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/><circle cx="40" cy="35" r="5" fill="#ff365d" opacity="0.3" stroke="#ff365d" stroke-width="1.5"/><path d="M35 55 Q40 62 45 55" stroke="#00d4ff" stroke-width="1.5" fill="none" opacity="0.5"/></svg>
+<div class="demo-status-active">● ACTIVO</div>
+<div class="demo-status-ai">⬡ IA</div>
+</div>
+<div class="demo-body">
+<h4>Sistema de Bombeo</h4>
+<p>Monitoreo predictivo de bombas industriales con análisis de vibraciones, cavitación y eficiencia hidráulica con IA.</p>
+<div class="demo-meta">
+<div class="demo-meta-item"><span class="demo-meta-dot" style="background:var(--red)"></span><span class="demo-meta-label">Vibration AI</span></div>
+<div class="demo-meta-item"><span class="demo-meta-dot" style="background:var(--red)"></span><span class="demo-meta-label">Alta Criticidad</span></div>
+</div>
+<a href="pages/Bomba.html" class="demo-btn" target="_blank">
+Abrir Demo
+<svg viewBox="0 0 16 16" fill="none"><path d="M3 8 L13 8 M10 4 L14 8 L10 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</a>
+</div>
+</div>
+</div>
+</section>
+
+<!-- INNOVATION SECTION -->
+<section class="section innovation-section" id="innovacion">
+<div class="section-header reveal">
+<div class="section-tag">
+<span class="section-tag-line"></span>
+Future Engineering
+<span class="section-tag-line"></span>
+</div>
+<h2 class="section-title">Innovación <span>sin Límites</span></h2>
+<p class="section-desc">La próxima frontera de la ingeniería impulsada por inteligencia artificial generativa, simulación avanzada y automatización inteligente.</p>
+</div>
+
+<div class="innovation-grid">
+<div class="innovation-card reveal reveal-delay-1">
+<div class="inno-icon">
+<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="12" stroke="#00d4ff" stroke-width="1.5" opacity="0.4"/><path d="M16 4 C16 4 22 10 22 16 C22 22 16 28 16 28" stroke="#00d4ff" stroke-width="1.5" fill="none"/><path d="M16 4 C16 4 10 10 10 16 C10 22 16 28 16 28" stroke="#1d7eff" stroke-width="1.5" fill="none" opacity="0.5"/><circle cx="16" cy="16" r="4" fill="#00d4ff" opacity="0.3" stroke="#00d4ff" stroke-width="1"/><path d="M12 16 L20 16 M16 12 L16 20" stroke="#00d4ff" stroke-width="0.5" opacity="0.4"/></svg>
+</div>
+<h4>IA Generativa</h4>
+<p>Modelos generativos para diseño automático de componentes optimizados topológicamente.</p>
+</div>
+
+<div class="innovation-card reveal reveal-delay-2">
+<div class="inno-icon">
+<svg viewBox="0 0 32 32" fill="none"><path d="M6 24 L10 16 L16 20 L22 8 L26 12" stroke="#00ff9d" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="24" r="2" fill="#00ff9d" opacity="0.5"/><circle cx="10" cy="16" r="2" fill="#00ff9d" opacity="0.5"/><circle cx="16" cy="20" r="2" fill="#00ff9d" opacity="0.5"/><circle cx="22" cy="8" r="2" fill="#00ff9d" opacity="0.5"/><circle cx="26" cy="12" r="2" fill="#00ff9d" opacity="0.5"/><path d="M6 28 L26 28" stroke="#00ff9d" stroke-width="1" opacity="0.2"/></svg>
+</div>
+<h4>Modelos Predictivos</h4>
+<p>Forecasting de alta precisión para demanda energética, desgaste de equipos y planificación operativa.</p>
+</div>
+
+<div class="innovation-card reveal reveal-delay-3">
+<div class="inno-icon">
+<svg viewBox="0 0 32 32" fill="none"><rect x="8" y="8" width="16" height="16" rx="3" stroke="#ffb400" stroke-width="1.5" fill="none" opacity="0.5"/><path d="M16 8 L16 24 M8 16 L24 16" stroke="#ffb400" stroke-width="1" opacity="0.3"/><circle cx="16" cy="16" r="5" stroke="#ffb400" stroke-width="1.5" fill="none"/><circle cx="16" cy="16" r="2" fill="#ffb400" opacity="0.5"/></svg>
+</div>
+<h4>Mantenimiento Inteligente</h4>
+<p>Estrategias de mantenimiento basadas en condición y riesgo optimizadas por algoritmos de reinforcement learning.</p>
+</div>
+
+<div class="innovation-card reveal reveal-delay-4">
+<div class="inno-icon">
+<svg viewBox="0 0 32 32" fill="none"><path d="M8 24 L8 12 L16 8 L24 12 L24 24 Z" stroke="#00d4ff" stroke-width="1.5" fill="none" opacity="0.4"/><path d="M16 8 L16 24 M8 16 L24 16" stroke="#00d4ff" stroke-width="1" opacity="0.3"/><circle cx="16" cy="16" r="3" fill="#00d4ff" opacity="0.4"/><path d="M12 20 L16 16 L20 20" stroke="#00ff9d" stroke-width="1.5" fill="none" opacity="0.6"/></svg>
+</div>
+<h4>Simulación Avanzada</h4>
+<p>Simulaciones multiphysics en tiempo real con modelos reducidos acelerados por GPU y IA surrogate.</p>
+</div>
+
+<div class="innovation-card reveal reveal-delay-5">
+<div class="inno-icon">
+<svg viewBox="0 0 32 32" fill="none"><circle cx="12" cy="16" r="8" stroke="#1d7eff" stroke-width="1.5" fill="none" opacity="0.3"/><circle cx="20" cy="16" r="8" stroke="#00d4ff" stroke-width="1.5" fill="none" opacity="0.3"/><circle cx="16" cy="16" r="4" stroke="#00ff9d" stroke-width="1.5" fill="none"/><circle cx="16" cy="16" r="1.5" fill="#00ff9d"/><line x1="8" y1="16" x2="12" y2="16" stroke="#1d7eff" stroke-width="1" opacity="0.3"/><line x1="20" y1="16" x2="24" y2="16" stroke="#00d4ff" stroke-width="1" opacity="0.3"/></svg>
+</div>
+<h4>Digital Twin Industrial</h4>
+<p>Gemelos digitales de plantas completas con sincronización bidireccional y optimización autónoma.</p>
+</div>
+
+<div class="innovation-card reveal reveal-delay-6">
+<div class="inno-icon">
+<svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="12" stroke="#00ff9d" stroke-width="1" opacity="0.2"/><path d="M16 4 A12 12 0 0 1 28 16" stroke="#00ff9d" stroke-width="2" stroke-linecap="round" opacity="0.6"/><path d="M28 16 A12 12 0 0 1 16 28" stroke="#1d7eff" stroke-width="2" stroke-linecap="round" opacity="0.4"/><path d="M16 28 A12 12 0 0 1 4 16" stroke="#ffb400" stroke-width="2" stroke-linecap="round" opacity="0.3"/><circle cx="16" cy="16" r="6" stroke="#00ff9d" stroke-width="1.5" fill="none"/><circle cx="16" cy="16" r="2" fill="#00ff9d" opacity="0.6"/></svg>
+</div>
+<h4>Automatización IA</h4>
+<p>Sistemas de control autónomo que aprenden y se adaptan continuamente a las condiciones operativas cambiantes.</p>
+</div>
+</div>
+</section>
+
+<!-- CONTACT / CTA SECTION -->
+<section class="section" id="contacto" style="background:linear-gradient(180deg,var(--bg-primary),var(--bg-secondary))">
+<div class="section-header reveal">
+<div class="section-tag">
+<span class="section-tag-line"></span>
+Conecta con Nosotros
+<span class="section-tag-line"></span>
+</div>
+<h2 class="section-title">Transforma tu <span>Industria</span></h2>
+<p class="section-desc">Descubre cómo IngeniusPro puede revolucionar tus operaciones con soluciones de ingeniería inteligente potenciadas por IA.</p>
+</div>
+<div style="text-align:center" class="reveal">
+<div style="max-width:600px;margin:0 auto;padding:40px;background:rgba(15,33,51,0.4);border:1px solid rgba(0,212,255,0.1);border-radius:20px;backdrop-filter:blur(10px)">
+<h3 style="font-family:'Orbitron',sans-serif;font-size:20px;margin-bottom:12px;color:var(--cyan);letter-spacing:1px">¿Listo para el siguiente nivel?</h3>
+<p style="font-size:14px;color:var(--text-secondary);margin-bottom:28px;line-height:1.7">Nuestro equipo de expertos en IA e ingeniería está listo para diseñar la solución perfecta para tu operación.</p>
+<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+<a href="mailto:contacto@ingeniuspro.com" class="btn btn-primary">Solicitar Demo</a>
+<a href="#" class="btn btn-secondary">Documentación</a>
+</div>
+<div style="margin-top:28px;padding-top:20px;border-top:1px solid rgba(0,212,255,0.06);display:flex;justify-content:center;gap:30px;flex-wrap:wrap">
+<div style="text-align:center"><div style="font-family:'Orbitron',sans-serif;font-size:18px;color:var(--green)">24/7</div><div style="font-size:10px;color:var(--text-dark);letter-spacing:1px;text-transform:uppercase;margin-top:4px">Soporte</div></div>
+<div style="text-align:center"><div style="font-family:'Orbitron',sans-serif;font-size:18px;color:var(--cyan)">99.97%</div><div style="font-size:10px;color:var(--text-dark);letter-spacing:1px;text-transform:uppercase;margin-top:4px">Uptime</div></div>
+<div style="text-align:center"><div style="font-family:'Orbitron',sans-serif;font-size:18px;color:var(--amber)">&lt;50ms</div><div style="font-size:10px;color:var(--text-dark);letter-spacing:1px;text-transform:uppercase;margin-top:4px">Latencia</div></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+<div class="footer-inner">
+<div class="footer-top">
+<div class="footer-brand">
+<div class="footer-brand-logo">
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="flg" x1="0" y1="0" x2="100" y2="100"><stop offset="0%" stop-color="#00d4ff"/><stop offset="100%" stop-color="#1d7eff"/></linearGradient></defs>
+<circle cx="50" cy="50" r="45" stroke="url(#flg)" stroke-width="1" opacity="0.3"/>
+<circle cx="50" cy="50" r="35" stroke="url(#flg)" stroke-width="1.5" opacity="0.5"/>
+<polygon points="50,15 78,65 22,65" stroke="url(#flg)" stroke-width="2" fill="none"/>
+<polygon points="50,85 22,35 78,35" stroke="url(#flg)" stroke-width="1.5" fill="none" opacity="0.6"/>
+<circle cx="50" cy="50" r="4" fill="#00d4ff"/>
+<circle cx="50" cy="15" r="3" fill="#00d4ff"/>
+<circle cx="22" cy="65" r="3" fill="#1d7eff"/>
+<circle cx="78" cy="65" r="3" fill="#1d7eff"/>
+<line x1="50" y1="50" x2="50" y2="15" stroke="#00d4ff" stroke-width="0.5" opacity="0.4"/>
+<line x1="50" y1="50" x2="22" y2="65" stroke="#1d7eff" stroke-width="0.5" opacity="0.4"/>
+<line x1="50" y1="50" x2="78" y2="65" stroke="#1d7eff" stroke-width="0.5" opacity="0.4"/>
+</svg>
+<span>INGENIUSPRO</span>
+</div>
+<p>Engineering Intelligence Systems — Soluciones avanzadas de ingeniería potenciadas con Inteligencia Artificial para la industria del futuro.</p>
+</div>
+<div class="footer-links">
+<div class="footer-col">
+<h5>Soluciones</h5>
+<a href="#">Sistemas Energéticos</a>
+<a href="#">Manufactura Inteligente</a>
+<a href="#">Gemelos Digitales</a>
+<a href="#">Mantenimiento Predictivo</a>
+<a href="#">Reliability Engineering</a>
+</div>
+<div class="footer-col">
+<h5>Tecnología</h5>
+<a href="#">Inteligencia Artificial</a>
+<a href="#">Machine Learning</a>
+<a href="#">IIoT Industrial</a>
+<a href="#">SCADA Inteligente</a>
+<a href="#">Analítica Predictiva</a>
+</div>
+<div class="footer-col">
+<h5>Empresa</h5>
+<a href="#">Acerca de</a>
+<a href="#">Carreras</a>
+<a href="#">Blog</a>
+<a href="#">Prensa</a>
+<a href="#">Partners</a>
+</div>
+</div>
+<div class="footer-social">
+<a href="#" aria-label="LinkedIn">
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6 V12 M4 3.5 V3.51 M7 12 V8 C7 6.5 9 6 10 7 C11 8 10 12 10 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+</a>
+<a href="#" aria-label="Twitter">
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3 L8 8 L3 13 M13 3 L8 8 L13 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+</a>
+<a href="#" aria-label="GitHub">
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M8 3 V1 M5 5 L3 4 M11 5 L13 4" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+</a>
+<a href="#" aria-label="YouTube">
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="4" width="12" height="8" rx="2" stroke="currentColor" stroke-width="1.5"/><polygon points="7,6 7,10 11,8" fill="currentColor"/></svg>
+</a>
+</div>
+</div>
+<div class="footer-bottom">
+<p>© 2026 IngeniusPro. Todos los derechos reservados.</p>
+<div class="footer-bottom-links">
+<a href="#">Privacidad</a>
+<a href="#">Términos</a>
+<a href="#">Cookies</a>
+</div>
+</div>
+</div>
+</footer>
+
+<script>
+// LOADER
+window.addEventListener('load',()=>{
+setTimeout(()=>{
+document.getElementById('loader').classList.add('hidden');
+},1800);
+});
+
+// PARTICLES
+(function(){
+const canvas=document.getElementById('particles-canvas');
+const ctx=canvas.getContext('2d');
+let particles=[];
+let w,h;
+function resize(){w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight}
+resize();
+window.addEventListener('resize',resize);
+
+class Particle{
+constructor(){this.reset()}
+reset(){
+this.x=Math.random()*w;
+this.y=Math.random()*h;
+this.size=Math.random()*1.5+0.3;
+this.speedX=(Math.random()-0.5)*0.3;
+this.speedY=(Math.random()-0.5)*0.3;
+this.opacity=Math.random()*0.4+0.1;
+this.color=Math.random()>0.7?'#00d4ff':Math.random()>0.5?'#1d7eff':'#00ff9d';
+}
+update(){
+this.x+=this.speedX;
+this.y+=this.speedY;
+if(this.x<0||this.x>w||this.y<0||this.y>h)this.reset();
+}
+draw(){
+ctx.beginPath();
+ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+ctx.fillStyle=this.color;
+ctx.globalAlpha=this.opacity;
+ctx.fill();
+ctx.globalAlpha=1;
+}
+}
+
+const count=Math.min(80,Math.floor(w*h/15000));
+for(let i=0;i<count;i++)particles.push(new Particle());
+
+function connectParticles(){
+for(let i=0;i<particles.length;i++){
+for(let j=i+1;j<particles.length;j++){
+const dx=particles[i].x-particles[j].x;
+const dy=particles[i].y-particles[j].y;
+const dist=Math.sqrt(dx*dx+dy*dy);
+if(dist<150){
+ctx.beginPath();
+ctx.strokeStyle=`rgba(0,212,255,${0.06*(1-dist/150)})`;
+ctx.lineWidth=0.5;
+ctx.moveTo(particles[i].x,particles[i].y);
+ctx.lineTo(particles[j].x,particles[j].y);
+ctx.stroke();
+}
+}
+}
+}
+
+function animate(){
+ctx.clearRect(0,0,w,h);
+particles.forEach(p=>{p.update();p.draw()});
+connectParticles();
+requestAnimationFrame(animate);
+}
+animate();
+})();
+
+// HEADER SCROLL
+const header=document.getElementById('header');
+window.addEventListener('scroll',()=>{
+if(window.scrollY>50)header.classList.add('scrolled');
+else header.classList.remove('scrolled');
+});
+
+// MOBILE NAV
+const mobileToggle=document.getElementById('mobileToggle');
+const mainNav=document.getElementById('mainNav');
+mobileToggle.addEventListener('click',()=>{
+mobileToggle.classList.toggle('active');
+mainNav.classList.toggle('open');
+});
+mainNav.querySelectorAll('a').forEach(a=>{
+a.addEventListener('click',()=>{
+mobileToggle.classList.remove('active');
+mainNav.classList.remove('open');
+});
+});
+
+// REVEAL ON SCROLL
+const revealElements=document.querySelectorAll('.reveal');
+const revealObserver=new IntersectionObserver((entries)=>{
+entries.forEach(entry=>{
+if(entry.isIntersecting){
+entry.target.classList.add('visible');
+}
+});
+},{threshold:0.1,rootMargin:'0px 0px -50px 0px'});
+revealElements.forEach(el=>revealObserver.observe(el));
+
+// COUNTER ANIMATION
+const counters=document.querySelectorAll('.counter');
+const counterObserver=new IntersectionObserver((entries)=>{
+entries.forEach(entry=>{
+if(entry.isIntersecting){
+const el=entry.target;
+const target=parseFloat(el.dataset.target);
+const isDecimal=target%1!==0;
+const duration=2000;
+const start=performance.now();
+function update(now){
+const elapsed=now-start;
+const progress=Math.min(elapsed/duration,1);
+const eased=1-Math.pow(1-progress,3);
+const current=eased*target;
+if(isDecimal)el.textContent=current.toFixed(1);
+else el.textContent=Math.floor(current);
+if(progress<1)requestAnimationFrame(update);
+else el.textContent=isDecimal?target.toFixed(1):target;
+}
+requestAnimationFrame(update);
+counterObserver.unobserve(el);
+}
+});
+},{threshold:0.5});
+counters.forEach(c=>counterObserver.observe(c));
+
+// SMOOTH SCROLL
+document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
+anchor.addEventListener('click',function(e){
+e.preventDefault();
+const target=document.querySelector(this.getAttribute('href'));
+if(target){
+const offset=80;
+const top=target.getBoundingClientRect().top+window.pageYOffset-offset;
+window.scrollTo({top,behavior:'smooth'});
+}
+});
+});
+
+// ENERGY LINES EFFECT
+(function(){
+const hero=document.querySelector('.hero');
+if(!hero)return;
+function createEnergyLine(){
+const line=document.createElement('div');
+line.classList.add('energy-line');
+const y=Math.random()*100;
+const width=Math.random()*30+10;
+const left=Math.random()*80;
+line.style.cssText=`top:${y}%;left:${left}%;width:${width}%;animation-duration:${Math.random()*3+2}s;animation-delay:${Math.random()*2}s`;
+hero.querySelector('.hero-bg').appendChild(line);
+setTimeout(()=>line.remove(),6000);
+}
+setInterval(createEnergyLine,2000);
+})();
+
+// TECH METRIC ANIMATION
+const techFills=document.querySelectorAll('.tech-metric-fill');
+const techObserver=new IntersectionObserver((entries)=>{
+entries.forEach(entry=>{
+if(entry.isIntersecting){
+const fill=entry.target;
+const width=fill.style.width;
+fill.style.width='0%';
+setTimeout(()=>{fill.style.width=width},200);
+techObserver.unobserve(fill);
+}
+});
+},{threshold:0.3});
+techFills.forEach(f=>techObserver.observe(f));
+
+// HOVER GLOW EFFECT ON CARDS
+document.querySelectorAll('.solution-card,.demo-card,.tech-card,.innovation-card').forEach(card=>{
+card.addEventListener('mousemove',(e)=>{
+const rect=card.getBoundingClientRect();
+const x=e.clientX-rect.left;
+const y=e.clientY-rect.top;
+card.style.setProperty('--mouse-x',`${x}px`);
+card.style.setProperty('--mouse-y',`${y}px`);
+});
+});
+</script>
+</body>
+</html>
